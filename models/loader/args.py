@@ -45,8 +45,8 @@ parser.add_argument('--lora', type=str, help='Name of the LoRA to apply to the m
 parser.add_argument("--lora-dir", type=str, default=LORA_DIR, help="Path to directory with all the loras")
 
 # Accelerate/transformers
-parser.add_argument('--load-in-8bit', action='store_true', default=LOAD_IN_8BIT,
-                    help='Load the model with 8-bit precision.')
+parser.add_argument('--load-in-4bit', action='store_true', default=LOAD_IN_8BIT,
+                    help='Load the model with 4-bit precision.')
 parser.add_argument('--bf16', action='store_true', default=BF16,
                     help='Load the model with bfloat16 precision. Requires NVIDIA Ampere GPU.')
 

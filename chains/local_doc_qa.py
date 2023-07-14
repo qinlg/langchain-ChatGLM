@@ -1,4 +1,6 @@
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+
+from textsplitter.qa_text_splitter import QATextSplitter
 from vectorstores import MyFAISS
 from langchain.document_loaders import UnstructuredFileLoader, TextLoader, CSVLoader
 from configs.model_config import *
@@ -63,7 +65,7 @@ def load_file(filepath, sentence_size=SENTENCE_SIZE, using_zh_title_enhance=ZH_T
         docs = loader.load()
     elif filepath.lower().endswith(".txt"):
         loader = TextLoader(filepath, autodetect_encoding=True)
-        textsplitter = ChineseTextSplitter(pdf=False, sentence_size=sentence_size)
+        textsplitter = QATextSplitter(pdf=False, sentence_size=sentence_size)
         docs = loader.load_and_split(textsplitter)
     elif filepath.lower().endswith(".pdf"):
         loader = UnstructuredPaddlePDFLoader(filepath)
@@ -123,7 +125,7 @@ class LocalDocQA:
     embeddings: object = None
     top_k: int = VECTOR_SEARCH_TOP_K
     chunk_size: int = CHUNK_SIZE
-    chunk_conent: bool = True
+    chunk_conent: bool = False
     score_threshold: int = VECTOR_SEARCH_SCORE_THRESHOLD
 
     def init_cfg(self,

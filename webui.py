@@ -7,6 +7,7 @@ import nltk
 import models.shared as shared
 from models.loader.args import parser
 from models.loader import LoaderCheckPoint
+import api
 import os
 
 nltk.data.path = [NLTK_DATA_PATH] + nltk.data.path
@@ -306,17 +307,15 @@ block_css = """.importantButton {
 
 webui_title = """
 # 🎉langchain-ChatGLM WebUI🎉
-👍 [https://github.com/imClumsyPanda/langchain-ChatGLM](https://github.com/imClumsyPanda/langchain-ChatGLM)
+多轮聊天后数据量过大如果报error，刷新页面重置即可。
+QA场景调试，采用了上传Text文本 内容中知识间用#@@#分隔
 """
 default_vs = get_vs_list()[0] if len(get_vs_list()) > 1 else "为空"
-init_message = f"""欢迎使用 langchain-ChatGLM Web UI！
-
-请在右侧切换模式，目前支持直接与 LLM 模型对话或基于本地知识库问答。
-
-知识库问答模式，选择知识库名称后，即可开始问答，当前知识库{default_vs}，如有需要可以在选择知识库名称后上传文件/文件夹至知识库。
-
-知识库暂不支持文件删除，该功能将在后续版本中推出。
+init_message = f"""欢迎使用小助手！当前知识库{default_vs}
 """
+# 请在右侧切换模式，目前支持直接与 LLM 模型对话或基于本地知识库问答。
+#
+# 知识库问答模式，选择知识库名称后，即可开始问答，当前知识库{default_vs}，如有需要可以在选择知识库名称后上传文件/文件夹至知识库。
 
 # 初始化消息
 model_status = init_model()
@@ -557,7 +556,17 @@ with gr.Blocks(css=block_css, theme=gr.themes.Default(**default_theme_args)) as 
 (demo
  .queue(concurrency_count=3)
  .launch(server_name='0.0.0.0',
-         server_port=7860,
-         show_api=False,
+         server_port=8888,
+         show_api=True,
          share=False,
          inbrowser=False))
+
+if __name__ == "__main__":
+    parser.add_argument("--host", type=str, default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8881)
+    # 初始化消息
+    args = None
+    args = parser.parse_args()
+    args_dict = vars(args)
+    shared.loaderCheckPoint = LoaderCheckPoint(args_dict)
+    api.api_start(args.host, args.port)
